@@ -346,6 +346,7 @@
       setTimeout(() => {
         bgMusic.currentTime = 0;
         bgMusic.volume = 0;
+        bgMusic.muted = false;
         bgMusic.play().catch(() => {});
 
         // Fade in background music
@@ -398,12 +399,7 @@
           />
         </div>
 
-        <p style="
-          margin-top: 16px;
-          font-size: 1.2rem;
-          color: #fff;
-          opacity: 0.95;
-        ">
+        <p class="final-line">
           She never says no to me, after all (?)
         </p>
       </div>
