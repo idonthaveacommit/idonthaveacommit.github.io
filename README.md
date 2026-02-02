@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preload" as="image" href="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/f77b6d210876ae81cff2cf271251e79c2cadbdb9/coffee-croissant.png?raw=true">
+  <meta charset="UTF-8" />
+  <title>Valentine?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+        /* =========================
+      GLOBAL
+    ========================= */
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: "Segoe UI", "Comic Sans MS", "Trebuchet MS", cursive;
+      color: #5c3b2e;
+      background: linear-gradient(
+        135deg,
+        #fff1f5 0%,
+        #ffe4ec 40%,
+        #fffaf0 100%
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* =========================
+      CARD CONTAINER (PAGE 1)
+    ========================= */
+    .container {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(8px);
+      border-radius: 32px;
+      padding: 40px 32px;
+      box-shadow: 0 25px 60px rgba(214, 51, 108, 0.18);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      max-width: 520px;
+      width: 90%;
+    }
+
+    /* =========================
+      IMAGE (PAGE 1)
+    ========================= */
+    .container img {
+      background: linear-gradient(
+        135deg,
+        #ffe4ec,
+        #fff1f5
+      );
+      width: 220px;
+      max-width: 85%;
+      margin-bottom: 24px;
+    }
+
+    /* =========================
+      QUESTION TEXT
+    ========================= */
+    h1 {
+      font-size: 2.1rem;
+      color: #d6336c;
+      margin-bottom: 36px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* =========================
+      BUTTONS AREA
+    ========================= */
+    .buttons {
+      position: relative;
+      width: 320px;
+      height: 160px;
+      margin-top: 10px;
+    }
+
+    button {
+      position: absolute;
+      width: 140px;
+      height: 56px;
+      border-radius: 30px;
+      border: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* =========================
+      YES BUTTON (PULSE)
+    ========================= */
+    #yes {
+      background-color: #ff4d6d;
+      color: #fffaf0;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      left: 10px;
+      bottom: 10px;
+      animation: gentlePulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes gentlePulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    /* =========================
+      NO BUTTON
+    ========================= */
+    #no {
+      background-color: #b5bcc2;
+      color: #ffffff;
+      font-weight: 500;
+      cursor: not-allowed;
+    }
+
+    /* =========================
+      CELEBRATION PAGE
+    ========================= */
+    .celebration {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(255, 255, 255, 0.25),
+          transparent 60%
+        ),
+        linear-gradient(
+          135deg,
+          #ff9a9e 0%,
+          #fecfef 40%,
+          #fbc2eb 100%
+        );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      animation: fadeIn 0.8s ease forwards;
+      z-index: 5;
+      color: #fff1f4;
+      text-align: center;
+    }
+
+    .celebration {
+      text-shadow: 0 2px 8px rgba(160, 40, 80, 0.35);
+    }
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* =========================
+      CELEBRATION HEADLINE BLOCK
+    ========================= */
+    .celebration-headline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .celebration-headline .main-line {
+      white-space: nowrap;
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-shadow: 0 3px 12px rgba(140, 30, 70, 0.45);
+    }
+
+    .celebration-headline .sub-line {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      letter-spacing: 0.4px;
+      color: #ffe3ea;
+    }
+
+    /* =========================
+      PHOTO ON CELEBRATION PAGE
+    ========================= */
+    .celebration img {
+      margin-top: 24px;
+      width: 260px;
+      max-width: 80%;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================
+      FINAL CHEEKY LINE
+    ========================= */
+    .final-line {
+      margin-top: 16px;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-style: italic;
+      color: #ffe3ea;
+    }
+
+    /* =========================
+      FLOATING HEARTS
+    ========================= */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 24px;
+      opacity: 0.75;
+      animation: floatUp 5s linear infinite;
+      filter: drop-shadow(0 4px 6px rgba(214, 51, 108, 0.25));
+    }
+
+    @keyframes floatUp {
+      to {
+        transform: translateY(-110vh);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sounds -->
+
+  <audio id="victorySound" preload="auto">
+    <source src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/c8e529e76989c9fc4abd13b58b86af72e6e74bfc/220691__pep_molina__woohoo.mp3?raw=true" type="audio/mpeg">
+  </audio>
+
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/1ed3dd3e636aaf7d26b202990ebb34a6b3b31ba9/salsa.mp3?raw=true" type="audio/mpeg">
+  </audio>
+
+  <div class="container" id="main">
+
+ <img
+    src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/f77b6d210876ae81cff2cf271251e79c2cadbdb9/coffee-croissant.png?raw=true"
+    alt="Cute coffee and croissant couple"
+  />
+
+    <h1>Henlo little one, will you be my Valentine this year?</h1>
+
+    <div class="buttons">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙃</button>
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+
+    const victorySound = document.getElementById("victorySound");
+    const bgMusic = document.getElementById("bgMusic");
+
+    /* =========================
+      NO BUTTON – FIXED 4 POSITIONS
+    ========================== */
+
+    const positions = [
+      { left: 170,  top: 95 },   // 👈 ORIGINAL / DEFAULT POSITION
+      { left: 10, top: 95 },
+      { left: 10,  top: 15 },
+      { left: 170, top: 15 }
+    ];
+
+    let currentPos = 0;
+
+    function applyPos(index) {
+      noBtn.style.left = positions[index].left + "px";
+      noBtn.style.top  = positions[index].top  + "px";
+    }
+
+    // Initial position — deterministic
+    applyPos(currentPos);
+
+    // Jump to another position on hover
+    noBtn.addEventListener("mouseenter", () => {
+      let next;
+      do {
+        next = Math.floor(Math.random() * positions.length);
+      } while (next === currentPos);
+
+      currentPos = next;
+      applyPos(currentPos);
+    });
+
+    // Absolutely non-clickable
+    noBtn.addEventListener("click", e => e.preventDefault());
+
+    /* =========================
+      YES CLICK → AUDIO + CELEBRATION
+    ========================== */
+
+    yesBtn.addEventListener("click", () => {
+      /* =========================
+        1. Victory sound — IMMEDIATE
+        ========================= */
+      victorySound.currentTime = 0;
+      victorySound.volume = 1;
+      victorySound.play().catch(() => {});
+
+      /* =========================
+        2. Background music — DELAYED
+        ========================= */
+      setTimeout(() => {
+        bgMusic.currentTime = 0;
+        bgMusic.volume = 0;
+        bgMusic.play().catch(() => {});
+
+        // Fade in background music
+        let vol = 0;
+        const fade = setInterval(() => {
+          vol += 0.02;
+          bgMusic.volume = Math.min(vol, 1);
+          if (vol >= 1) clearInterval(fade);
+        }, 100);
+      }, 400); // 👈 300–500ms sweet spot
+
+    /* ==========
+      NOW UI CHANGES (safe)
+      ========== */
+    document.getElementById("main").remove();
+
+    const celebration = document.createElement("div");
+    celebration.className = "celebration";
+    celebration.innerHTML = `
+      <div style="text-align:center; max-width:90%;">
+        <div style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        ">
+          <div style="
+            white-space: nowrap;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+          ">
+            💕 THANK GOD SHE SAID YES 💕
+          </div>
+
+          <div style="
+            font-size: 1.2rem;
+            opacity: 0.95;
+          ">
+            (although I kinda had a feeling.)
+          </div>
+        </div>
+
+        <!-- Your photo together -->
+        <img 
+          src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/f77b6d210876ae81cff2cf271251e79c2cadbdb9/coffee-croissant.png?raw=true"
+          alt="Us"
+          style="
+            margin-top: 24px;
+            width: 260px;
+            max-width: 80%;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            animation: fadeInUp 1s ease forwards;
+          "
+        />
+
+        <p style="
+          margin-top: 16px;
+          font-size: 1.2rem;
+          color: #fff;
+          opacity: 0.95;
+        ">
+          She never says no to me, after all (?)
+        </p>
+      </div>
+    `;
+
+    document.body.appendChild(celebration);
+
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💖";
+      heart.style.left = Math.random() * 100 + "vw";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }, 300);
+  });
+
+  </script>
+
+
+
+</body>
+</html>
