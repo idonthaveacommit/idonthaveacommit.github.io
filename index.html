@@ -190,7 +190,7 @@
       font-size: 1.2rem;
       opacity: 0.95;
       letter-spacing: 0.4px;
-      color: #ffe3ea;
+      color: #e74c73;
     }
 
     /* =========================
@@ -234,7 +234,7 @@
       font-size: 1.2rem;
       opacity: 0.9;
       font-style: italic;
-      color: #ffe3ea;
+      color: #e74c73;
       text-align: center;
     }
 
@@ -263,13 +263,13 @@
 
   <!-- Sounds -->
 
-  <audio id="victorySound" preload="auto">
+  <!-- <audio id="victorySound" preload="auto">
     <source src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/c8e529e76989c9fc4abd13b58b86af72e6e74bfc/220691__pep_molina__woohoo.mp3?raw=true" type="audio/mpeg">
   </audio>
 
   <audio id="bgMusic" preload="auto" loop>
     <source src="https://github.com/idonthaveacommit/idonthaveacommit.github.io/blob/1ed3dd3e636aaf7d26b202990ebb34a6b3b31ba9/salsa.mp3?raw=true" type="audio/mpeg">
-  </audio>
+  </audio> -->
 
   <div class="container" id="main">
 
@@ -290,16 +290,13 @@
     const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
 
-    const victorySound = document.getElementById("victorySound");
-    const bgMusic = document.getElementById("bgMusic");
-
     /* =========================
       NO BUTTON – FIXED 4 POSITIONS
     ========================== */
 
     const positions = [
-      { left: 170,  top: 95 },   // 👈 ORIGINAL / DEFAULT POSITION
-      { left: 10, top: 95 },
+      { left: 170, top: 95 },
+      { left: 10,  top: 95 },
       { left: 10,  top: 15 },
       { left: 170, top: 15 }
     ];
@@ -311,10 +308,8 @@
       noBtn.style.top  = positions[index].top  + "px";
     }
 
-    // Initial position — deterministic
     applyPos(currentPos);
 
-    // Jump to another position on hover
     noBtn.addEventListener("mouseenter", () => {
       let next;
       do {
@@ -325,101 +320,119 @@
       applyPos(currentPos);
     });
 
-    // Absolutely non-clickable
     noBtn.addEventListener("click", e => e.preventDefault());
 
     /* =========================
-      YES CLICK → AUDIO + CELEBRATION
+      WEB AUDIO (RELIABLE)
     ========================== */
 
-    yesBtn.addEventListener("click", () => {
-      /* =========================
-        1. Victory sound — IMMEDIATE
-        ========================= */
-      victorySound.currentTime = 0;
-      victorySound.volume = 1;
-      victorySound.play().catch(() => {});
+    let audioCtx;
+    let victoryBuffer;
+    let musicBuffer;
+
+    async function loadSound(url) {
+      const res = await fetch(url);
+      const arrayBuffer = await res.arrayBuffer();
+      return audioCtx.decodeAudioData(arrayBuffer);
+    }
+
+    async function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        await audioCtx.resume(); // 🔑 Safari / mobile fix
+
+        victoryBuffer = await loadSound(
+          "https://raw.githubusercontent.com/idonthaveacommit/idonthaveacommit.github.io/c8e529e76989c9fc4abd13b58b86af72e6e74bfc/220691__pep_molina__woohoo.mp3"
+        );
+
+        musicBuffer = await loadSound(
+          "https://raw.githubusercontent.com/idonthaveacommit/idonthaveacommit.github.io/1ed3dd3e636aaf7d26b202990ebb34a6b3b31ba9/salsa.mp3"
+        );
+      }
+    }
+
+    function playVictoryThenMusic() {
+      const now = audioCtx.currentTime;
 
       /* =========================
-        2. Background music — DELAYED
-        ========================= */
-      setTimeout(() => {
-        bgMusic.currentTime = 0;
-        bgMusic.volume = 0;
-        bgMusic.muted = false;
-        bgMusic.play().catch(() => {});
+        Victory sound
+      ========================== */
+      const victory = audioCtx.createBufferSource();
+      victory.buffer = victoryBuffer;
+      victory.connect(audioCtx.destination);
+      victory.start(now);
 
-        // Fade in background music
-        let vol = 0;
-        const fade = setInterval(() => {
-          vol += 0.02;
-          bgMusic.volume = Math.min(vol, 1);
-          if (vol >= 1) clearInterval(fade);
-        }, 100);
-      }, 400); // 👈 300–500ms sweet spot
+      /* =========================
+        Background music (longer ramp)
+      ========================== */
+      const music = audioCtx.createBufferSource();
+      music.buffer = musicBuffer;
+      music.loop = true;
 
-    /* ==========
-      NOW UI CHANGES (safe)
-      ========== */
-    document.getElementById("main").remove();
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0, now); // start silent
 
-    const celebration = document.createElement("div");
-    celebration.className = "celebration";
-    celebration.innerHTML = `
-      <div style="text-align:center; max-width:90%;">
-        <div style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        ">
-          <div style="
-            white-space: nowrap;
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 6px;
-          ">
-            💕 THANK GOD SHE SAID YES 💕
+      music.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      // Start together
+      music.start(now);
+
+      // ⏳ Slightly longer, smoother fade-in
+      const fadeDuration = Math.min(1.6, victoryBuffer.duration * 0.9);
+
+      gain.gain.linearRampToValueAtTime(
+        1,
+        now + fadeDuration
+      );
+    }
+
+    /* =========================
+      YES CLICK → AUDIO + UI
+    ========================== */
+
+    yesBtn.addEventListener("click", async () => {
+      await initAudio();
+      playVictoryThenMusic();
+
+      // UI changes AFTER click
+      document.getElementById("main").remove();
+
+      const celebration = document.createElement("div");
+      celebration.className = "celebration";
+      celebration.innerHTML = `
+        <div style="text-align:center; max-width:90%;">
+          <div class="celebration-headline">
+            <div class="main-line">💕 THANK GOD SHE SAID YES 💕</div>
+            <div class="sub-line">(although I kinda had a feeling.)</div>
           </div>
 
-          <div style="
-            font-size: 1.2rem;
-            opacity: 0.95;
-          ">
-            (although I kinda had a feeling.)
+          <div class="celebration-image-wrapper">
+            <img
+              src="https://github.com/idonthaveacommit/Scamentine/blob/21247e0183bd9159829d56ae697042cd61295cd6/IMG_6042.jpg?raw=true"
+              alt="Us"
+              class="celebration-image"
+            />
           </div>
+
+          <p class="final-line">
+            She never says no to me, after all (?)
+          </p>
         </div>
+      `;
 
-        <!-- Your photo together -->
-        <div class="celebration-image-wrapper">
-          <img 
-            src="https://github.com/idonthaveacommit/Scamentine/blob/21247e0183bd9159829d56ae697042cd61295cd6/IMG_6042.jpg?raw=true"
-            alt="Us"
-            class="celebration-image"
-          />
-        </div>
+      document.body.appendChild(celebration);
 
-        <p class="final-line">
-          She never says no to me, after all (?)
-        </p>
-      </div>
-    `;
-
-    document.body.appendChild(celebration);
-
-    setInterval(() => {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = "💖";
-      heart.style.left = Math.random() * 100 + "vw";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 5000);
-    }, 300);
-  });
-
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.textContent = "💖";
+        heart.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+      }, 300);
+    });
   </script>
-
-
 
 </body>
 </html>
